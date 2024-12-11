@@ -19,15 +19,45 @@ model = BertForSequenceClassification.from_pretrained('bert-base-uncased', num_l
 
 # Sample data
 texts = [
-    "I love this product", "This is the worst experience ever", "Quite average but acceptable",
-    "it is truly disgusting", "The script is unbelievable", "Swoozie Kurtz is excellent in a supporting role",
-    "This movie is so wasteful of talent", "Robert DeNiro plays the most unbelievably intelligent illiterate of all time",
-    "opening scene that is a terrific example of absurd comedy",
-    "Story of a man who has unnatural feelings for a pig","Avoid this movie",
-    "great acting","Robert De Niro has to be the most ingenious and insightful illiterate of all time.",
-    "I give it 1 out of 10, truly one of the worst 20 movies for its budget level that I have ever seen"
+    # Positive reviews
+    "I absolutely love this!", "Best product I've ever used.", "Such a wonderful experience.", 
+    "The quality is outstanding.", "Exceeded all my expectations.", 
+    "Highly recommend this to everyone.", "A masterpiece in every sense.", 
+    "This is my favorite purchase so far.", "Fantastic service, would buy again.", 
+    "Beautiful design and functionality.", "Incredible performance and features.", 
+    "This movie had me in tears of joy.", "Great job by the entire cast.", 
+    "The storyline was compelling and heartwarming.", "An excellent addition to the franchise.", 
+
+    # Negative reviews
+    "Worst product ever.", "I hated every second of it.", 
+    "Completely unacceptable quality.", "Do not waste your money on this.", 
+    "This is an absolute disaster.", "It broke after one use.", 
+    "Terrible customer service.", "Unbelievably bad experience.", 
+    "The movie was dull and predictable.", "I regret watching it.", 
+    "The characters were flat and uninspiring.", "A total waste of time.", 
+    "The plot was full of holes and made no sense.", 
+    "This was a major disappointment.", 
+
+    # Neutral/mixed reviews
+    "It's okay, not great but not bad either.", 
+    "The product is fine but could be better.", 
+    "Some features are good, but overall it's average.", 
+    "I liked the design but hated the functionality.", 
+    "Mixed feelings about this experience.", 
+    "It was enjoyable, but I wouldn't go out of my way for it again."
 ]
-labels = [1, 0, 1, 0, 1, 1, 0, 1, 1, 0,0,1,1,0]
+
+labels = [
+    # Positive labels
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+
+    # Negative labels
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+
+    # Neutral/mixed labels (optional: treat as 0 or remove)
+    0, 0, 0, 0, 0, 0
+]
+
 
 # Tokenize data
 inputs = tokenizer(texts, padding=True, truncation=True, return_tensors="pt", max_length=128)
@@ -116,7 +146,7 @@ print(classification_report(true_labels, predictions, target_names=["Negative", 
 
 
 
-"""   
+
 #Faire des prédictions sur de nouveaux textes
 
 # Nouveau texte
@@ -133,4 +163,4 @@ with torch.no_grad():
     sentiments = ["Negative" if pred == 0 else "Positive" for pred in preds]
 
 print(sentiments)
-"""
+
