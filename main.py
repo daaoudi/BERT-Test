@@ -1,3 +1,4 @@
+import transformers
 from transformers import BertTokenizer, BertForSequenceClassification
 import torch
 from torch.utils.data import DataLoader, Dataset
@@ -9,6 +10,9 @@ import os
 # Suppress symlink warning
 os.environ['HF_HUB_DISABLE_SYMLINKS_WARNING'] = '1'
 
+# ignore the warning as long as you're training the model properly
+transformers.logging.set_verbosity_error()
+
 # Load tokenizer and model
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 model = BertForSequenceClassification.from_pretrained('bert-base-uncased', num_labels=2)
@@ -19,9 +23,11 @@ texts = [
     "it is truly disgusting", "The script is unbelievable", "Swoozie Kurtz is excellent in a supporting role",
     "This movie is so wasteful of talent", "Robert DeNiro plays the most unbelievably intelligent illiterate of all time",
     "opening scene that is a terrific example of absurd comedy",
-    "Story of a man who has unnatural feelings for a pig"
+    "Story of a man who has unnatural feelings for a pig","Avoid this movie",
+    "great acting","Robert De Niro has to be the most ingenious and insightful illiterate of all time.",
+    "I give it 1 out of 10, truly one of the worst 20 movies for its budget level that I have ever seen"
 ]
-labels = [1, 0, 1, 0, 1, 1, 0, 1, 1, 0]
+labels = [1, 0, 1, 0, 1, 1, 0, 1, 1, 0,0,1,1,0]
 
 # Tokenize data
 inputs = tokenizer(texts, padding=True, truncation=True, return_tensors="pt", max_length=128)
@@ -67,7 +73,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model.to(device)
 
 # Training loop
-for epoch in range(3):
+for epoch in range(10):
     model.train()
     total_loss = 0
 
@@ -85,6 +91,8 @@ for epoch in range(3):
         optimizer.step()
 
     print(f"Epoch {epoch + 1}, Loss: {total_loss / len(train_loader):.4f}")
+
+
 
 # Evaluation
 model.eval()
