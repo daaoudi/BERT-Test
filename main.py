@@ -15,7 +15,7 @@ transformers.logging.set_verbosity_error()
 
 # Load tokenizer and model
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
-model = BertForSequenceClassification.from_pretrained('bert-base-uncased', num_labels=2)
+model = BertForSequenceClassification.from_pretrained('bert-base-uncased', num_labels=3)
 
 # Sample data
 texts = [
@@ -54,8 +54,8 @@ labels = [
     # Negative labels
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
 
-    # Neutral/mixed labels (optional: treat as 0 or remove)
-    0, 0, 0, 0, 0, 0
+    # Neutral labels 
+    2, 2, 2, 2, 2, 2
 ]
 
 
@@ -120,7 +120,7 @@ for epoch in range(10):
         loss.backward()
         optimizer.step()
 
-    print(f"Epoch {epoch + 1}, Loss: {total_loss / len(train_loader):.4f}")
+    #print(f"Epoch {epoch + 1}, Loss: {total_loss / len(train_loader):.4f}")
 
 
 
@@ -142,7 +142,7 @@ with torch.no_grad():
         predictions.extend(preds.cpu().numpy())
         true_labels.extend(labels.cpu().numpy())
 
-print(classification_report(true_labels, predictions, target_names=["Negative", "Positive"], zero_division=0))
+#print(classification_report(true_labels, predictions, target_names=["Negative", "Positive","Neutral"], zero_division=0))
 
 
 
@@ -150,7 +150,7 @@ print(classification_report(true_labels, predictions, target_names=["Negative", 
 #Faire des prédictions sur de nouveaux textes
 
 # Nouveau texte
-new_texts = ["The product is amazing!", "I didn't like the service."]
+new_texts = ["The product is amazing!", "I didn't like the service.","it's okay not great and either not bad"]
 inputs = tokenizer(new_texts, padding=True, truncation=True, return_tensors="pt", max_length=128)
 inputs = {key: val.to(device) for key, val in inputs.items()}
 
@@ -160,7 +160,7 @@ with torch.no_grad():
     outputs = model(**inputs)
     logits = outputs.logits
     preds = torch.argmax(logits, dim=1)
-    sentiments = ["Negative" if pred == 0 else "Positive" for pred in preds]
+    sentiments = ["Negative" if pred == 0 else "Neutral" if pred == 2 else "Positive" for pred in preds]
 
 print(sentiments)
 
