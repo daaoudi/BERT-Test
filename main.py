@@ -73,7 +73,7 @@ class SentimentDataset(Dataset):
 
     def __getitem__(self, idx):
         item = {key: val[idx].clone() for key, val in self.encodings.items()}
-        item['labels'] = torch.tensor(self.labels[idx])
+        item['labels'] = torch.tensor(self.labels[idx], dtype=torch.long)
         return item
 
 dataset = SentimentDataset(inputs, labels)
@@ -103,7 +103,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model.to(device)
 
 # Training loop
-for epoch in range(10):
+for epoch in range(3):
     model.train()
     total_loss = 0
 
